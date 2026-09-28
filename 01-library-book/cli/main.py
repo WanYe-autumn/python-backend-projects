@@ -1,6 +1,6 @@
-from services import add_book,get_quantity_book,get_average_price,get_quantity_borrowed_book,get_qunatity_unborrowed_book
-from models import  Book,prase_book_input
-from database import init_db,add_book_to_db,get_book_from_db,delete_book_from_db,borrow_book_from_db,return_book_from_db
+from .services import add_book,get_quantity_book,get_average_price,get_quantity_borrowed_book,get_qunatity_unborrowed_book
+from .models import  Book,prase_book_input
+from .database import init_db,add_book_to_db,get_book_from_db,delete_book_from_db,borrow_book_from_db,return_book_from_db
 
 def display_book(books: list[Book]) -> None:
     if not books:

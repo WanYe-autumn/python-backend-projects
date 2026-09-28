@@ -1,11 +1,10 @@
 from fastapi.testclient import TestClient
 from app import app
-# from database import init_db,add_book_to_db
 import pytest
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-from orm_demo import Base, get_session, BookORM, UserORM, BorrowRecordORM
+from models import Base, get_session, BookORM, UserORM, BorrowRecordORM
 from security import create_access_token
 from datetime import datetime, timezone
 

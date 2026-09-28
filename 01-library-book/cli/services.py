@@ -1,4 +1,4 @@
-from models import Book
+from .models import Book
 
 
 def get_quantity_book(books: list[Book]) -> int:

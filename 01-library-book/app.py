@@ -4,7 +4,7 @@ from fastapi import FastAPI,HTTPException,Depends,Query
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from orm_demo import BookORM,get_session,UserORM,BorrowRecordORM
+from models import BookORM,get_session,UserORM,BorrowRecordORM
 from datetime import datetime, timezone
 from jwt.exceptions import InvalidTokenError
 from security import hash_password, verify_password, create_access_token, decode_access_token
@@ -17,7 +17,6 @@ import logging
 logger = logging.getLogger("uvicorn.error")
 logger.setLevel(logging.INFO)
 
-DB_PATH = "library.db"
 app = FastAPI()
 
 # Set up HTTPBearer for token authentication
@@ -87,28 +86,6 @@ def get_my_borrow_records(
     return records
 
 
-# 查看自己的一条借阅记录
-@app.get("/borrow-records/{record_id}", response_model=BorrowRecordRead)
-def get_my_borrow_record(
-    record_id: int,
-    session: Session = Depends(get_session),
-    current_user: UserORM = Depends(get_current_user),
-):
-    statement = select(BorrowRecordORM).where(
-        BorrowRecordORM.id == record_id,
-        BorrowRecordORM.user_id == current_user.id,
-    )
-
-    record = session.scalars(statement).first()
-
-    if record is None:
-        raise HTTPException(
-            status_code=404,
-            detail="借阅记录不存在",
-        )
-
-    return record
-
 @app.post("/users")
 def create_user(user: UserCreate, session: Session = Depends(get_session)):
     # Check if the username already exists
@@ -161,12 +138,6 @@ def login(user: UserLogin, session: Session = Depends(get_session)):
 
     return {"message": "Login successful", "id": existing_user.id, "username": existing_user.username, "token":access_token, "token_type": "bearer"}
 
-# @app.get("/debug/error")
-# def create_test_error():
-#     logger.info("Intentional error endpoint called")
-#     result = 1 / 0
-#     return {"result": result}
-
 class BookCreate(BaseModel):
     title: str
     author: str
@@ -189,7 +160,6 @@ class BookBorrowedUpdate(BaseModel):
 
 @app.post("/books")                             # 增书
 def create_book(book: BookCreate, session: Session = Depends(get_session)):
-    # exists = whether_book_in_db(book.title, book.author ,DB_PATH)
     statement = select(BookORM).where(BookORM.title == book.title, BookORM.author == book.author)
     exists = session.scalars(statement).first()
     if exists:

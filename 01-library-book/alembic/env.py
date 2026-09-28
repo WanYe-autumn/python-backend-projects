@@ -1,5 +1,5 @@
 from logging.config import fileConfig
-from orm_demo import Base, DATABASE_URL
+from models import Base, DATABASE_URL
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 

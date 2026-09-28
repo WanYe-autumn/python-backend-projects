@@ -1,5 +1,5 @@
-from database import add_book_to_db,init_db,get_book_from_db,delete_book_from_db,borrow_book_from_db,return_book_from_db
-from models import Book
+from cli.database import add_book_to_db,init_db,get_book_from_db,delete_book_from_db,borrow_book_from_db,return_book_from_db
+from cli.models import Book
 import pytest
 def test_add_book_to_db(tmp_path):
     db_path = tmp_path / "test.db"

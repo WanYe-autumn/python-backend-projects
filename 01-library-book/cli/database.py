@@ -1,7 +1,9 @@
 import sqlite3
-from models import Book
+from pathlib import Path
 
-DB_PATH = "library.db"
+from .models import Book
+
+DB_PATH = Path(__file__).resolve().parent / "library.db"
 
 def init_db(db_path=DB_PATH):
     conn = sqlite3.connect(db_path)

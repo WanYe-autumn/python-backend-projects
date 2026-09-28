@@ -1,5 +1,5 @@
-from services import add_book,delete_book,make_borrowed_book_true,return_book,get_average_price,get_quantity_borrowed_book
-from models import Book
+from cli.services import add_book,delete_book,make_borrowed_book_true,return_book,get_average_price,get_quantity_borrowed_book
+from cli.models import Book
 import pytest
 
 def test_add_book():
