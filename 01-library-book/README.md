@@ -32,7 +32,7 @@ Python、FastAPI、Pydantic、SQLite、pytest、TestClient；使用 Uvicorn 启�
 
 ## 本地运行
 
-以下命令在 `03-library-book` 目录执行，使用已经安装项目依赖的 Python 虚拟环境。已知本机测试环境为 Python 3.12.13；当前尚未提交锁定版本的依赖清单，新环境的完整安装复现仍待补充。
+以下命令在 `01-library-book` 目录执行，使用已经安装项目依赖的 Python 虚拟环境。已知本机测试环境为 Python 3.12.13；当前尚未提交锁定版本的依赖清单，新环境的完整安装复现仍待补充。
 
 首次启动先创建开发数据库及表：
 
