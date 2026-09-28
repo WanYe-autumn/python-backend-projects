@@ -1,4 +1,8 @@
+from pathlib import Path
+
 from fastapi import FastAPI,HTTPException,Depends,Query
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from orm_demo import BookORM,get_session,UserORM,BorrowRecordORM
 from datetime import datetime, timezone
@@ -357,3 +361,18 @@ def get_my_books(
 
     books = session.scalars(statement).all()
     return books
+
+
+FRONTEND_DIR = Path(__file__).resolve().parent / "frontend"
+
+
+@app.get("/")
+def library_home():
+    return FileResponse(FRONTEND_DIR / "index.html")
+
+
+app.mount(
+    "/static",
+    StaticFiles(directory=FRONTEND_DIR),
+    name="frontend",
+)

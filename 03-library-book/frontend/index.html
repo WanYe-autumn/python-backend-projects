@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>灯下图书馆</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="mark" aria-hidden="true"></span>
+        <div>
+          <p class="brand-kicker">Library</p>
+          <h1>灯下图书馆</h1>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="主导航">
+        <button type="button" class="nav-item is-active" data-view="catalog">馆藏</button>
+        <button type="button" class="nav-item" data-view="mine">我的在借</button>
+        <button type="button" class="nav-item" data-view="history">借阅记录</button>
+      </nav>
+
+      <div class="sidebar-foot">
+        <p id="user-label" class="user-label">未登录</p>
+        <button type="button" id="auth-toggle" class="ghost-button">登录</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="eyebrow">Catalog</p>
+          <h2 id="page-title">馆藏</h2>
+        </div>
+        <div class="top-actions">
+          <label class="search">
+            <span class="sr-only">搜索书名或作者</span>
+            <input id="search" type="search" placeholder="搜索书名或作者">
+          </label>
+          <button type="button" id="open-create" class="solid-button">入库</button>
+        </div>
+      </header>
+
+      <section class="stats" id="stats"></section>
+      <section id="filters" class="filters" hidden>
+        <button type="button" class="chip is-active" data-filter="all">全部</button>
+        <button type="button" class="chip" data-filter="available">在架</button>
+        <button type="button" class="chip" data-filter="borrowed">已借出</button>
+      </section>
+      <section id="view" class="view"></section>
+    </main>
+  </div>
+
+  <div id="auth" class="overlay" hidden>
+    <div class="auth-card" role="dialog" aria-labelledby="auth-title">
+      <div class="auth-copy">
+        <p class="brand-kicker">After hours</p>
+        <h2 id="auth-title">把书从架子上取下来。</h2>
+        <p>登录之后可以借阅、归还，并查看自己的借阅记录。馆藏可以先逛。</p>
+      </div>
+      <form id="auth-form">
+        <div class="tabs">
+          <button type="button" class="tab is-active" data-mode="login">登录</button>
+          <button type="button" class="tab" data-mode="register">注册</button>
+        </div>
+        <label>
+          用户名
+          <input name="username" autocomplete="username" minlength="3" maxlength="50" required>
+        </label>
+        <label>
+          密码
+          <input name="password" type="password" autocomplete="current-password" minlength="6" maxlength="100" required>
+        </label>
+        <p id="auth-error" class="form-error" hidden></p>
+        <div class="form-row">
+          <button type="submit" class="solid-button" id="auth-submit">登录</button>
+          <button type="button" class="text-button" id="skip-auth">先看看馆藏</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <dialog id="create-dialog">
+    <form id="create-form">
+      <header class="dialog-head">
+        <h3>新书入库</h3>
+        <button type="button" class="icon-button" data-close="create-dialog" aria-label="关闭">×</button>
+      </header>
+      <label>
+        书名
+        <input name="title" required maxlength="100">
+      </label>
+      <label>
+        作者
+        <input name="author" required maxlength="100">
+      </label>
+      <label>
+        价格
+        <input name="price" type="number" min="0.01" step="0.01" required>
+      </label>
+      <p class="form-error" data-error hidden></p>
+      <div class="form-row">
+        <button type="submit" class="solid-button">保存</button>
+        <button type="button" class="text-button" data-close="create-dialog">取消</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="edit-dialog">
+    <form id="edit-form">
+      <header class="dialog-head">
+        <div>
+          <p class="eyebrow">Book</p>
+          <h3 id="edit-title">图书</h3>
+        </div>
+        <button type="button" class="icon-button" data-close="edit-dialog" aria-label="关闭">×</button>
+      </header>
+      <label>
+        书名
+        <input name="title" required maxlength="100">
+      </label>
+      <label>
+        作者
+        <input name="author" required maxlength="100">
+      </label>
+      <label>
+        价格
+        <input name="price" type="number" min="0.01" step="0.01" required>
+        <span class="hint" id="price-hint"></span>
+      </label>
+      <p class="form-error" data-error hidden></p>
+      <div class="form-row">
+        <button type="submit" class="solid-button" id="save-book">保存资料</button>
+        <button type="button" class="ghost-button" id="save-price">改价</button>
+        <button type="button" class="danger-button" id="delete-book">删除</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" hidden></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

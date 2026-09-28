@@ -34,7 +34,7 @@ def prase_book_input(raw_input: str) -> Book:
     if fields[3] == "1":
         borrowed = True
     elif fields[3] == "0":
-        borrowed == False
+        borrowed = False
     else:
         raise ValueError("是否借出必须输入0或1")
 
