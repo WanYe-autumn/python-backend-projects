@@ -1,47 +1,66 @@
-from dataclasses import dataclass
+from sqlalchemy import create_engine, String, Float, Boolean, text, select, DateTime, ForeignKey, Index
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
+from datetime import datetime
+from config import DATABASE_URL
 
-@dataclass
-class Book:
-    title: str
-    author: str
-    price: float
-    borrowed: bool
+engine = create_engine(DATABASE_URL)
+# Engine 主要知道：
+# - 数据库在哪里；
+# - 用什么驱动连接；
+# - 如何管理数据库连接。
+def get_session():
+    with Session(engine) as session:
+        yield session
 
-def prase_book_input(raw_input: str) -> Book:
-    raw_input = raw_input.replace("，", ",").replace("；", ";")
-    fields = raw_input.split(",")
+class Base(DeclarativeBase):
+    pass
 
-    if len(fields) != 4:
-        raise ValueError("请输入：书名,作者,价格,是否已经借出")
+class BookORM(Base):
+    __tablename__ = "books"
 
-    title = fields[0].strip()
-    author = fields[1].strip()
-    try:
-        price = float(fields[2])
-    except ValueError:
-        raise ValueError("价格必须是数字")
-        
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(100))
+    author: Mapped[str] = mapped_column(String(100))
+    price: Mapped[float] = mapped_column(Float)
+    borrowed: Mapped[bool] = mapped_column(Boolean, default=False)
+    description: Mapped[str | None] = mapped_column(String(500), nullable=True)
+# Base.metadata.create_all(engine)
 
-    if title == "":
-        raise ValueError("书名不能为空")
+# with Session(engine) as session:
+#     book = BookORM(title="Python", author="A", price=88.0, borrowed=False)
+#     session.add(book)
+#     session.commit()
+#     print(book.id, book.title)
 
-    if author == "":
-        raise ValueError("作者名不能为空")
-    
-    if price <= 0 :
-        raise ValueError("价格必须大于零")
+# with Session(engine) as session:
+#     statement = select(BookORM)
+#     books = session.scalars(statement).all()
+#     for book in books:
+#         print(book.id, book.title, book.author, book.price, book.borrowed)
 
-    if fields[3] == "1":
-        borrowed = True
-    elif fields[3] == "0":
-        borrowed = False
-    else:
-        raise ValueError("是否借出必须输入0或1")
+# with engine.connect() as conn:
+#     result = conn.execute(text("SELECT current_database()"))
+#     print(result.scalar())
 
-    return Book(
-    title=title,
-    author=author,
-    price=price,
-    borrowed=borrowed    
+class UserORM(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(String(50), unique=True)
+    password_hash: Mapped[str] = mapped_column(String(255))
+
+class BorrowRecordORM(Base):
+    __tablename__ = "borrow_records"
+    __table_args__ = (
+        Index(
+            "uq_borrow_records_active_book",
+            "book_id",
+            unique=True,
+            postgresql_where=text("return_date IS NULL"),
+        ),
     )
-    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    book_id: Mapped[int] = mapped_column(ForeignKey("books.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    borrow_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    return_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
