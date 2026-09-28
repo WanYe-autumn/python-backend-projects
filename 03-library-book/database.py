@@ -168,8 +168,6 @@ def delete_book_from_db(book_id: int, db_path=DB_PATH):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
-    print("book_id =", book_id)
-    print("db_path =", db_path)
 
     cursor.execute(
         "DELETE FROM books WHERE id = ?",
